@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acorda, Dinheiro | Simulador</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #f5c518;
+      --dark: #1a1a1a;
+      --bg: #f4f4f4;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--dark);
+    }
+    header {
+      background-color: #000;
+      padding: 20px;
+      text-align: center;
+    }
+    header img {
+      max-height: 60px;
+    }
+    .banner {
+      background: #ffffff;
+      padding: 60px 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .banner h1 {
+      margin: 0;
+      font-size: 2.5em;
+      color: #1a1a1a;
+    }
+    .banner p {
+      max-width: 700px;
+      margin: 20px auto 0;
+      font-size: 1.2em;
+      color: #333;
+    }
+    .section {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+    input, select {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: var(--primary);
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-right: 10px;
+    }
+    #resultadoMilhao, #tabelaResultados {
+      margin-top: 20px;
+      font-weight: bold;
+      line-height: 1.6;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    table th {
+      background-color: var(--primary);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo-acorda-dinheiro.png" alt="Logo Acorda Dinheiro">
+  </header>
+
+  <section class="banner">
+    <h1>Bem-vindo ao Acorda, Dinheiro</h1>
+    <p>Nosso site nasceu com o propósito de transformar a forma como você lida com o dinheiro. Aqui você encontra ferramentas simples e práticas para aprender a investir, economizar e fazer o seu dinheiro trabalhar por você.</p>
+  </section>
+
+  <section class="section" id="simulador">
+    <h2>Simulador de Investimentos</h2>
+    <div>
+      <input type="text" id="aporteInicial" placeholder="Aporte Inicial (ex: 1.000,00)">
+      <input type="text" id="aporteMensal" placeholder="Aporte Mensal (ex: 200,00)">
+      <input type="text" id="juros" placeholder="Taxa de Juros (ex: 1,00)">
+      <select id="tipoJuros">
+        <option value="mensal">% ao mês</option>
+        <option value="anual">% ao ano</option>
+      </select>
+      <input type="number" id="tempo" placeholder="Período de Investimento">
+      <select id="tipoTempo">
+        <option value="meses">Meses</option>
+        <option value="anos">Anos</option>
+      </select>
+      <div>
+        <button onclick="simularInvestimento()">Simular</button>
+        <button onclick="gerarTabela()">Gerar Tabela</button>
+        <button onclick="limparSimulador()">Limpar</button>
+      </div>
+      <div id="resultadoMilhao"></div>
+      <canvas id="graficoMilhao"></canvas>
+      <div id="tabelaResultados"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Como usar o simulador</h2>
+    <ul>
+      <li><strong>Aporte Inicial:</strong> valor que você já possui e deseja investir de imediato.</li>
+      <li><strong>Aporte Mensal:</strong> valor que você pretende aplicar todos os meses.</li>
+      <li><strong>Taxa de Juros:</strong> rentabilidade estimada mensal ou anual do seu investimento.</li>
+      <li><strong>Período de Investimento:</strong> tempo que o dinheiro ficará aplicado, em meses ou anos.</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2>O Poder dos Juros Compostos</h2>
+    <p>Os <strong>juros compostos</strong> são conhecidos como "os juros sobre juros". Isso significa que a cada mês os rendimentos são somados ao capital, e o próximo cálculo de rendimento é feito sobre esse novo montante. Já os <strong>juros simples</strong> sempre consideram apenas o capital inicial.</p>
+    <p>Ao longo do tempo, a diferença entre os dois se torna significativa. Por isso, quanto mais cedo você começa a investir, maior é o impacto dos juros compostos no seu patrimônio.</p>
+    <p>Use nosso simulador e veja como seu dinheiro pode crescer com constância e disciplina!</p>
+  </section>
+
+  <script>
+    let grafico;
+    let dadosTabela = [];
+
+    function formatarParaBR(valor) {
+      return valor.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    function aplicarMascaraBR(input) {
+      input.addEventListener('input', function () {
+        let valor = this.value.replace(/\D/g, '');
+        valor = (parseFloat(valor) / 100).toFixed(2).toString();
+        valor = valor.replace('.', ',');
+        valor = valor.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        this.value = valor;
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      aplicarMascaraBR(document.getElementById("aporteInicial"));
+      aplicarMascaraBR(document.getElementById("aporteMensal"));
+      aplicarMascaraBR(document.getElementById("juros"));
+    });
+
+    function simularInvestimento() {
+      const aporteInicial = parseFloat(document.getElementById("aporteInicial").value.replaceAll('.', '').replace(',', '.')) || 0;
+      const aporteMensal = parseFloat(document.getElementById("aporteMensal").value.replaceAll('.', '').replace(',', '.')) || 0;
+      const juros = parseFloat(document.getElementById("juros").value.replaceAll('.', '').replace(',', '.'));
+      const tipoJuros = document.getElementById("tipoJuros").value;
+      const tempo = parseInt(document.getElementById("tempo").value);
+      const tipoTempo = document.getElementById("tipoTempo").value;
+
+      if (isNaN(juros) || isNaN(tempo)) {
+        document.getElementById("resultadoMilhao").innerText = "Preencha todos os campos corretamente.";
+        return;
+      }
+
+      const taxaMensal = tipoJuros === "anual" ? Math.pow(1 + (juros / 100), 1 / 12) - 1 : juros / 100;
+      const numMeses = tipoTempo === "anos" ? tempo * 12 : tempo;
+
+      let montante = aporteInicial;
+      let totalInvestido = aporteInicial;
+      dadosTabela = [{ mes: 0, valor: montante }];
+      const dados = [];
+      const labels = [];
+
+      for (let i = 1; i <= numMeses; i++) {
+        montante = (montante + aporteMensal) * (1 + taxaMensal);
+        totalInvestido += aporteMensal;
+        dadosTabela.push({ mes: i, valor: montante });
+        dados.push(montante.toFixed(2));
+        labels.push(i + "º mês");
+      }
+
+      const totalJuros = montante - totalInvestido;
+
+      document.getElementById("resultadoMilhao").innerHTML = `
+        <strong>Resultado da Simulação:</strong><br>
+        Valor Total Final: R$ ${formatarParaBR(montante)}<br>
+        Total Investido: R$ ${formatarParaBR(totalInvestido)}<br>
+        Total de Juros: R$ ${formatarParaBR(totalJuros)}
+      `;
+
+      if (grafico) grafico.destroy();
+
+      const ctx = document.getElementById("graficoMilhao").getContext("2d");
+      grafico = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Evolução do Investimento',
+            data: dados,
+            borderColor: '#f5c518',
+            backgroundColor: 'rgba(245, 197, 24, 0.2)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false
+            }
+          }
+        }
+      });
+    }
+
+    function gerarTabela() {
+      if (!dadosTabela.length) {
+        document.getElementById("tabelaResultados").innerText = "Realize uma simulação primeiro.";
+        return;
+      }
+      let tabela = `<table><tr><th>Mês</th><th>Valor Acumulado</th></tr>`;
+      dadosTabela.forEach(linha => {
+        tabela += `<tr><td>${linha.mes}</td><td>R$ ${formatarParaBR(linha.valor)}</td></tr>`;
+      });
+      tabela += `</table>`;
+      document.getElementById("tabelaResultados").innerHTML = tabela;
+    }
+
+    function limparSimulador() {
+      document.getElementById("aporteInicial").value = "";
+      document.getElementById("aporteMensal").value = "";
+      document.getElementById("juros").value = "";
+      document.getElementById("tempo").value = "";
+      document.getElementById("tipoJuros").value = "mensal";
+      document.getElementById("tipoTempo").value = "meses";
+      document.getElementById("resultadoMilhao").innerText = "";
+      document.getElementById("tabelaResultados").innerText = "";
+      if (grafico) grafico.destroy();
+    }
+  </script>
+</body>
+</html>
