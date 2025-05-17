@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Primeiro Milhão - Acorda Dinheiro</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    main {
+      max-width: 700px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #003366;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .radio-group {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-around;
+    }
+    .radio-group label {
+      font-weight: normal;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-weight: bold;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .resultado {
+      margin-top: 20px;
+      background: #eaf1f8;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .explicacao {
+      margin-top: 30px;
+      background: #f0f4f9;
+      padding: 20px;
+      border-left: 6px solid #003366;
+      border-radius: 8px;
+    }
+    .explicacao h3 {
+      margin-top: 0;
+      color: #003366;
+    }
+    .explicacao ul {
+      padding-left: 20px;
+    }
+    .explicacao li {
+      margin-bottom: 10px;
+    }
+    .explicacao p {
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Primeiro Milhão</h1>
+    <p>Simule como alcançar seu primeiro R$1.000.000</p>
+  </header>
+  <main>
+    <h2>Comece sua jornada rumo ao milhão</h2>
+    <div class="input-group">
+      <label for="valorAtual">Quanto você já tem guardado?</label>
+      <input type="text" id="valorAtual" placeholder="Ex: 5.000,00">
+    </div>
+    <div class="input-group">
+      <label for="taxa">Taxa de juros</label>
+      <input type="text" id="taxa" placeholder="Ex: 1,0">
+      <select id="tipoJuros">
+        <option value="mensal">ao mês</option>
+        <option value="anual">ao ano</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="aporte">Aporte mensal</label>
+      <input type="text" id="aporte" placeholder="Ex: 500,00">
+    </div>
+    <div class="radio-group">
+      <label><input type="radio" name="modo" value="tempo" checked> Calcular tempo necessário</label>
+      <label><input type="radio" name="modo" value="valor"> Calcular valor mensal necessário</label>
+    </div>
+    
+    <div id="resultado" class="resultado" style="display: none;"></div>
+  
+    <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 30px;">
+      <button onclick="simularMilhao()" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">Simular</button>
+      <button onclick="novaSimulacao()" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">Nova Simulação</button>
+      <button onclick="window.location.href='index.html'" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">Voltar aos Simuladores</button>
+    </div>
+
+    <section class="explicacao">
+    <h3>Como utilizar este simulador</h3>
+    <p>Este simulador ajuda você a entender quanto tempo levaria (ou quanto você precisa investir por mês) para atingir o seu primeiro R$1.000.000,00 com base no valor que já possui, na taxa de juros e nos aportes mensais.</p>
+    <ul>
+      <li><strong>Quanto você já tem guardado?</strong> Informe o valor atual que já está investido.</li>
+      <li><strong>Taxa de juros:</strong> Insira a rentabilidade esperada, podendo ser ao mês ou ao ano.</li>
+      <li><strong>Aporte mensal:</strong> Valor que você pretende investir todo mês.</li>
+      <li><strong>Escolha:</strong> Se deseja descobrir o tempo necessário para alcançar o milhão, ou quanto seria o valor mensal necessário para alcançar o milhão em 10 anos.</li>
+    </ul>
+    <p><strong>Atenção:</strong> os resultados são estimativas baseadas em juros compostos. Rentabilidades passadas não garantem resultados futuros, e a inflação pode impactar o valor real acumulado.</p>
+  </section>
+</main>
+  <script>
+    function parseValor(valor) {
+      return parseFloat(valor.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+    function formatBR(valor) {
+      return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+    function simularMilhao() {
+      const valorAtual = parseValor(document.getElementById('valorAtual').value);
+      let taxa = parseValor(document.getElementById('taxa').value) / 100;
+      const tipoJuros = document.getElementById('tipoJuros').value;
+      const aporte = parseValor(document.getElementById('aporte').value);
+      const modo = document.querySelector('input[name="modo"]:checked').value;
+      const objetivo = 1000000;
+      let meses = 0;
+      let total = valorAtual;
+      if (tipoJuros === 'anual') {
+        taxa = Math.pow(1 + taxa, 1 / 12) - 1;
+      }
+      let textoResultado = '';
+      if (modo === 'tempo') {
+        while (total < objetivo && meses < 1000) {
+          total *= (1 + taxa);
+          total += aporte;
+          meses++;
+        }
+        if (total >= objetivo) {
+          textoResultado = `Com um aporte mensal de ${formatBR(aporte)}, você atingirá R$ 1.000.000,00 em aproximadamente <strong>${meses}</strong> meses (~${Math.floor(meses/12)} anos e ${meses%12} meses).`;
+        } else {
+          textoResultado = 'Não foi possível atingir o objetivo dentro de 1000 meses.';
+        }
+      } else {
+        const valorMensal = calcularAporteNecessario(valorAtual, taxa, objetivo);
+        textoResultado = `Para atingir R$ 1.000.000,00 em 10 anos (120 meses), você precisaria investir aproximadamente <strong>${formatBR(valorMensal)}</strong> por mês.`;
+      }
+      const resultadoDiv = document.getElementById('resultado');
+      resultadoDiv.innerHTML = `<p>${textoResultado}</p>`;
+      resultadoDiv.style.display = 'block';
+    }
+    function calcularAporteNecessario(valorAtual, taxa, objetivo) {
+      const meses = 120;
+      let total = valorAtual * Math.pow(1 + taxa, meses);
+      let aporte = (objetivo - total) * (taxa / (Math.pow(1 + taxa, meses) - 1));
+      return aporte;
+    }
+  
+    function formatarReaisInput(elemento) {
+      let valor = elemento.value.replace(/\D/g, '');
+      if (valor.length < 3) valor = valor.padStart(3, '0');
+      const inteiro = valor.slice(0, valor.length - 2);
+      const decimal = valor.slice(-2);
+      const valorFormatado = parseFloat(inteiro + '.' + decimal).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+      elemento.value = valorFormatado;
+    }
+
+    document.getElementById('valorAtual').addEventListener('input', function(e) {
+      formatarReaisInput(e.target);
+    });
+    document.getElementById('aporte').addEventListener('input', function(e) {
+      formatarReaisInput(e.target);
+    });
+
+    function novaSimulacao() {
+      document.getElementById('valorAtual').value = '';
+      document.getElementById('taxa').value = '';
+      document.getElementById('aporte').value = '';
+      document.getElementById('resultado').style.display = 'none';
+      document.getElementById('tipoJuros').selectedIndex = 0;
+    }
+
+    function parseValor(valor) {
+      valor = valor.replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+      return parseFloat(valor) || 0;
+    }
+
+  </script>
+</body>
+</html>

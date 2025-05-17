@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparador de Investimentos - Acorda Dinheiro</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    main {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #003366;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-weight: bold;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .resultado {
+      margin-top: 20px;
+      background: #eaf1f8;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .explicacao {
+      margin-top: 40px;
+      background: #f0f4f9;
+      padding: 20px;
+      border-left: 6px solid #003366;
+      border-radius: 8px;
+    }
+    .explicacao h3 {
+      margin-top: 0;
+      color: #003366;
+    }
+    .explicacao ul {
+      padding-left: 20px;
+    }
+    .explicacao li {
+      margin-bottom: 10px;
+    }
+    .explicacao a {
+      color: #003366;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Comparador de Investimentos</h1>
+    <p>Veja a diferença entre poupança e outros investimentos</p>
+  </header>
+  <main>
+    <h2>Compare e descubra onde investir melhor</h2>
+
+    <div class="input-group">
+      <label for="valorInvestido">Valor a ser investido</label>
+      <input type="text" id="valorInvestido" placeholder="Ex: 1.000,00">
+    </div>
+
+    <div class="input-group">
+      <label for="tempo">Tempo de investimento</label>
+      <input type="number" id="tempo" placeholder="Ex: 12">
+      <select id="tipoTempo">
+        <option value="meses">Meses</option>
+        <option value="anos">Anos</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="poupanca">Rentabilidade da poupança (% a.m.)</label>
+      <input type="text" id="poupanca" placeholder="Ex: 0,5">
+    </div>
+
+    <div class="input-group">
+      <label for="investimento">Rentabilidade de outro investimento</label>
+      <input type="text" id="investimento" placeholder="Ex: 1,0">
+      <select id="tipoInvestimento">
+        <option value="mensal">ao mês</option>
+        <option value="anual">ao ano</option>
+      </select>
+    </div>
+
+    
+    <div id="resultado" class="resultado" style="display:none;"></div>
+    
+    <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 30px;">
+      <button onclick="compararInvestimentos()" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">Comparar</button>
+      <button onclick="novaSimulacao()" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">Nova Simulação</button>
+      <button onclick="window.location.href='index.html'" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">Voltar aos Simuladores</button>
+    </div>
+
+    <section class="explicacao">
+      <h3>Como utilizar este simulador</h3>
+      <p>Este simulador compara quanto você teria investindo um valor fixo na poupança ou em outro investimento com rentabilidade diferente.</p>
+      <ul>
+        <li><strong>Valor a ser investido:</strong> valor inicial do seu investimento.</li>
+        <li><strong>Tempo de investimento:</strong> quanto tempo você pretende deixar o valor aplicado.</li>
+        <li><strong>Rentabilidade da poupança:</strong> taxa média mensal da poupança (geralmente 0,5% a.m.).</li>
+        <li><strong>Outro investimento:</strong> taxa estimada de um CDB, Tesouro Direto, fundos ou ações.</li>
+      </ul>
+      <p>O sistema calcula o montante final acumulado em cada opção, considerando juros compostos, e exibe qual delas rende mais ao final do período.</p>
+      <p><strong>Importante:</strong> as taxas usadas são estimativas. A rentabilidade da poupança pode mudar com a Selic. Para consultar a taxa atual da poupança, acesse:
+        <a href="https://www.bcb.gov.br/estatisticas/remuneradepositospoupanca" target="_blank">
+          Banco Central - Remuneração da Poupança
+        </a>
+      </p>
+    </section>
+  
+    
+
+  
+    
+
+  </main>
+
+  <script>
+    function parseValor(valor) {
+      return parseFloat(valor.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+
+    function formatBR(valor) {
+      return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function compararInvestimentos() {
+      const valorInicial = parseValor(document.getElementById('valorInvestido').value);
+      let tempo = parseInt(document.getElementById('tempo').value);
+      const tipoTempo = document.getElementById('tipoTempo').value;
+
+      let taxaPoupanca = parseValor(document.getElementById('poupanca').value) / 100;
+      let taxaOutro = parseValor(document.getElementById('investimento').value) / 100;
+      const tipoOutro = document.getElementById('tipoInvestimento').value;
+
+      if (tipoTempo === 'anos') tempo *= 12;
+      if (tipoOutro === 'anual') taxaOutro = Math.pow(1 + taxaOutro, 1/12) - 1;
+
+      let totalPoupanca = valorInicial;
+      let totalOutro = valorInicial;
+
+      for (let i = 0; i < tempo; i++) {
+        totalPoupanca *= (1 + taxaPoupanca);
+        totalOutro *= (1 + taxaOutro);
+      }
+
+      const diferenca = totalOutro - totalPoupanca;
+
+      document.getElementById('resultado').style.display = 'block';
+      document.getElementById('resultado').innerHTML =
+        `<p>Após ${tempo} meses:</p>
+         <p>Poupança: <strong>${formatBR(totalPoupanca)}</strong></p>
+         <p>Outro investimento: <strong>${formatBR(totalOutro)}</strong></p>
+         <p>Diferença: <strong>${formatBR(diferenca)}</strong></p>`;
+    }
+  
+    function formatarReaisInput(elemento) {
+      let valor = elemento.value.replace(/\D/g, '');
+      if (valor.length < 3) {
+        valor = valor.padStart(3, '0');
+      }
+      const inteiro = valor.slice(0, valor.length - 2);
+      const decimal = valor.slice(-2);
+      const valorFormatado = parseFloat(inteiro + '.' + decimal).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+      elemento.value = valorFormatado;
+    }
+
+    document.getElementById('valorInvestido').addEventListener('input', function(e) {
+      formatarReaisInput(e.target);
+    });
+
+  
+    function novaSimulacao() {
+      document.getElementById('valorInvestido').value = '';
+      document.getElementById('tempo').value = '';
+      document.getElementById('poupanca').value = '';
+      document.getElementById('investimento').value = '';
+      document.getElementById('resultado').style.display = 'none';
+      document.getElementById('tipoTempo').selectedIndex = 0;
+      document.getElementById('tipoInvestimento').selectedIndex = 0;
+    }
+
+    function parseValor(valor) {
+      valor = valor.replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+      return parseFloat(valor) || 0;
+    }
+
+  </script>
+</body>
+</html>

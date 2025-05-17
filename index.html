@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cards Principais - Acorda Dinheiro</title>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    .emoji {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #0077cc;
+    }
+    .card-description {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 15px;
+    }
+    .card a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #0077cc;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .card a:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+<h1>🚀 Escolha Seu Simulador</h1>
+<div class="cards-container">
+<div class="card">
+<div class="emoji">💰</div>
+<div class="card-title">Investimento</div>
+<div class="card-description">Simule seus aportes e veja o poder dos juros compostos.</div>
+<a href="simulador-investimento.html">Acessar</a>
+</div>
+<div class="card">
+<div class="emoji">🎯</div>
+<div class="card-title">Primeiro Milhão</div>
+<div class="card-description">Descubra quanto investir para alcançar seu primeiro milhão.</div>
+<a href="primeiro-milhao.html">Acessar</a>
+</div>
+<div class="card">
+<div class="emoji">🧓</div>
+<div class="card-title">Aposentadoria</div>
+<div class="card-description">Planeje sua aposentadoria e garanta seu futuro financeiro.</div>
+<a href="simulador-aposentadoria.html">Acessar</a>
+</div>
+<div class="card">
+<div class="emoji">⚡</div>
+<div class="card-title">Comparador</div>
+<div class="card-description">Compare a poupança com outros investimentos e escolha melhor.</div>
+<a href="comparador-investimentos.html">Acessar</a>
+</div>
+<div class="card">
+<div class="emoji">🚨</div>
+<div class="card-title">Reserva de Emergência</div>
+<div class="card-description">Descubra quanto guardar para proteger seu futuro.</div>
+<a href="reserva-emergencia.html">Acessar</a>
+</div>
+<div class="card">
+<div class="emoji">📉</div>
+<div class="card-title">Inflação</div>
+<div class="card-description">Veja quanto seu dinheiro perdeu de valor com o tempo.</div>
+<a href="simulador-inflacao.html">Acessar</a>
+</div>
+</div>
+</body>
+</html>

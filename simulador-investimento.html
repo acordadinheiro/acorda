@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Investimento - Acorda Dinheiro</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    main {
+      max-width: 700px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #003366;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-weight: bold;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .resultado {
+      margin-top: 20px;
+      background: #eaf1f8;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .explicacao {
+      margin-top: 30px;
+      background: #f0f4f9;
+      padding: 20px;
+      border-left: 6px solid #003366;
+      border-radius: 8px;
+    }
+    .explicacao h3 {
+      margin-top: 0;
+      color: #003366;
+    }
+    .explicacao ul {
+      padding-left: 20px;
+    }
+    .explicacao li {
+      margin-bottom: 10px;
+    }
+    .explicacao p {
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Simulador de Investimento</h1>
+    <p>Descubra quanto seu dinheiro pode render com o tempo</p>
+  </header>
+  <main>
+    <h2>Simule seus rendimentos</h2>
+    <div class="input-group">
+      <label for="valorInicial">Valor inicial investido</label>
+      <input type="text" id="valorInicial" placeholder="Ex: 1.000,00">
+    </div>
+    <div class="input-group">
+      <label for="aporte">Aporte mensal</label>
+      <input type="text" id="aporte" placeholder="Ex: 200,00">
+    </div>
+    <div class="input-group">
+      <label for="taxa">Taxa de juros</label>
+      <input type="text" id="taxa" placeholder="Ex: 1,0">
+      <select id="tipoJuros">
+        <option value="mensal">ao mês</option>
+        <option value="anual">ao ano</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="periodo">Tempo de investimento</label>
+      <input type="number" id="periodo" placeholder="Ex: 12">
+      <select id="tipoPeriodo">
+        <option value="meses">Meses</option>
+        <option value="anos">Anos</option>
+      </select>
+    </div>
+    
+    <div id="resultado" class="resultado" style="display:none;"></div>
+    
+    <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 30px;">
+      <button onclick="simularInvestimento()" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">Simular</button>
+      <button onclick="novaSimulacao()" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">Nova Simulação</button>
+      <button onclick="window.location.href='index.html'" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">Voltar aos Simuladores</button>
+    </div>
+
+    <section class="explicacao">
+      <h3>Como utilizar este simulador</h3>
+      <p>Este simulador permite estimar quanto seu dinheiro pode render ao longo do tempo, considerando um valor inicial, aportes mensais e uma taxa de juros composta.</p>
+      <ul>
+        <li><strong>Valor inicial investido:</strong> O valor que você já possui e irá aplicar no início do investimento.</li>
+        <li><strong>Aporte mensal:</strong> O valor que você pretende adicionar todos os meses ao seu investimento.</li>
+        <li><strong>Taxa de juros:</strong> A rentabilidade estimada do investimento, podendo ser mensal ou anual.</li>
+        <li><strong>Período:</strong> Tempo que o dinheiro ficará investido, em meses ou anos.</li>
+      </ul>
+      <p>O resultado mostrará o total aportado, os juros ganhos no período e o valor final acumulado.</p>
+      <p><strong>Atenção:</strong> Este é apenas um simulador. Os valores são estimativas e não garantem retorno futuro. Fatores como inflação e variações de mercado podem afetar os resultados reais.</p>
+    </section>
+  </main>
+  <script>
+    function parseValor(valor) {
+      return parseFloat(valor.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+    function formatBR(valor) {
+      return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+    function simularInvestimento() {
+      let valorInicial = parseValor(document.getElementById('valorInicial').value);
+      const aporte = parseValor(document.getElementById('aporte').value);
+      let taxa = parseValor(document.getElementById('taxa').value) / 100;
+      const tipoJuros = document.getElementById('tipoJuros').value;
+      let periodo = parseInt(document.getElementById('periodo').value);
+      const tipoPeriodo = document.getElementById('tipoPeriodo').value;
+
+      if (tipoJuros === 'anual') taxa = Math.pow(1 + taxa, 1 / 12) - 1;
+      if (tipoPeriodo === 'anos') periodo *= 12;
+
+      let total = valorInicial;
+      for (let i = 0; i < periodo; i++) {
+        total *= (1 + taxa);
+        total += aporte;
+      }
+
+      const totalInvestido = valorInicial + (aporte * periodo);
+      const juros = total - totalInvestido;
+
+      const resultado = `
+        <p>Total investido: <strong>${formatBR(totalInvestido)}</strong></p>
+        <p>Total em juros: <strong>${formatBR(juros)}</strong></p>
+        <p>Valor final: <strong>${formatBR(total)}</strong></p>`;
+
+      document.getElementById('resultado').innerHTML = resultado;
+      document.getElementById('resultado').style.display = 'block';
+    }
+  
+    function formatarReaisInput(elemento) {
+      let valor = elemento.value.replace(/\D/g, '');
+      if (valor.length < 3) valor = valor.padStart(3, '0');
+      const inteiro = valor.slice(0, valor.length - 2);
+      const decimal = valor.slice(-2);
+      const valorFormatado = parseFloat(inteiro + '.' + decimal).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+      elemento.value = valorFormatado;
+    }
+
+    document.getElementById('valorInicial').addEventListener('input', function(e) {
+      formatarReaisInput(e.target);
+    });
+    document.getElementById('aporte').addEventListener('input', function(e) {
+      formatarReaisInput(e.target);
+    });
+
+    function novaSimulacao() {
+      document.getElementById('valorInicial').value = '';
+      document.getElementById('aporte').value = '';
+      document.getElementById('taxa').value = '';
+      document.getElementById('periodo').value = '';
+      document.getElementById('tipoJuros').selectedIndex = 0;
+      document.getElementById('tipoPeriodo').selectedIndex = 0;
+      document.getElementById('resultado').innerHTML = '';
+      document.getElementById('resultado').style.display = 'none';
+    }
+
+    function parseValor(valor) {
+      valor = valor.replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+      return parseFloat(valor) || 0;
+    }
+
+  </script>
+</body>
+</html>

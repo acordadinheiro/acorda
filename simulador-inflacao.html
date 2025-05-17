@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulador de Inflação - Acorda Dinheiro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    main {
+      max-width: 700px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #003366;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .resultado {
+      margin-top: 20px;
+      background: #eaf1f8;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .botoes {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .botoes button {
+      flex: 1;
+      padding: 10px 15px;
+      font-weight: bold;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .explicacao {
+      margin-top: 30px;
+      background: #f0f4f9;
+      padding: 20px;
+      border-left: 6px solid #003366;
+      border-radius: 8px;
+    }
+    .explicacao h3 {
+      margin-top: 0;
+      color: #003366;
+    }
+    .explicacao ul {
+      padding-left: 20px;
+    }
+    .explicacao li {
+      margin-bottom: 10px;
+    }
+    .explicacao p {
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Simulador de Inflação</h1>
+    <p>Descubra quanto o seu dinheiro perdeu de valor com o tempo</p>
+  </header>
+  <main>
+    <h2>Corrija valores pela inflação (IPCA)</h2>
+    <div class="input-group">
+      <label for="valor">Valor original (R$)</label>
+      <input type="text" id="valor" placeholder="Ex: 1.000,00">
+    </div>
+    <div class="input-group">
+      <label for="anoInicial">Ano de origem</label>
+      <input type="number" id="anoInicial" min="1994" max="2024" placeholder="Ex: 1994">
+    </div>
+    <div class="input-group">
+      <label for="anoFinal">Ano final</label>
+      <input type="number" id="anoFinal" min="1994" max="2024" placeholder="Ex: 2024">
+    </div>
+
+    <div class="botoes">
+      <button onclick="simularInflacao()">Simular</button>
+      <button onclick="novaSimulacao()">Nova Simulação</button>
+      <button onclick="window.location.href='index.html'">Voltar aos Simuladores</button>
+    </div>
+
+    <div id="resultado" class="resultado" style="display:none;"></div>
+
+    <section class="explicacao">
+      <h3>Como utilizar este simulador</h3>
+      <p>Informe o valor original em reais e os anos entre os quais deseja calcular a inflação acumulada com base no IPCA.</p>
+      <ul>
+        <li>O valor corrigido representa quanto seria necessário hoje para manter o mesmo poder de compra.</li>
+        <li>A fonte utilizada é a <strong>tabela oficial do IPCA</strong>, publicada pelo <strong>IBGE</strong>.</li>
+        <li>Os valores são acumulados ano a ano com base na inflação anual.</li>
+      </ul>
+      <p>Esta ferramenta é útil para compreender a perda do poder de compra ao longo do tempo.</p>
+    </section>
+  </main>
+
+  <script>
+    const ipcaPorAno = {
+      1994: 916.46, 1995: 22.41, 1996: 9.56, 1997: 5.22, 1998: 1.65, 1999: 8.94,
+      2000: 5.97, 2001: 7.67, 2002: 12.53, 2003: 9.3, 2004: 7.6, 2005: 5.69,
+      2006: 3.14, 2007: 4.46, 2008: 5.9, 2009: 4.31, 2010: 5.91, 2011: 6.5,
+      2012: 5.84, 2013: 5.91, 2014: 6.41, 2015: 10.67, 2016: 6.29, 2017: 2.95,
+      2018: 3.75, 2019: 4.31, 2020: 4.52, 2021: 10.06, 2022: 5.79, 2023: 4.62, 2024: 3.86
+    };
+
+    function parseValor(valor) {
+      valor = valor.replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+      return parseFloat(valor) || 0;
+    }
+
+    function formatBR(valor) {
+      return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function simularInflacao() {
+      const valor = parseValor(document.getElementById('valor').value);
+      const anoInicial = parseInt(document.getElementById('anoInicial').value);
+      const anoFinal = parseInt(document.getElementById('anoFinal').value);
+
+      if (isNaN(valor) || isNaN(anoInicial) || isNaN(anoFinal) || anoInicial >= anoFinal) {
+        document.getElementById('resultado').innerHTML = "<p>Preencha corretamente os campos.</p>";
+        document.getElementById('resultado').style.display = 'block';
+        return;
+      }
+
+      let fator = 1;
+      for (let ano = anoInicial; ano < anoFinal; ano++) {
+        const ipca = ipcaPorAno[ano];
+        if (ipca !== undefined) {
+          fator *= (1 + ipca / 100);
+        }
+      }
+
+      const valorCorrigido = valor * fator;
+      const inflacaoAcumulada = (fator - 1) * 100;
+
+      document.getElementById('resultado').innerHTML =
+        `<p>💡 Se você tivesse <strong>${formatBR(valor)}</strong> no ano de <strong>${anoInicial}</strong>, hoje você precisaria de <strong>${formatBR(valorCorrigido)}</strong> para manter o mesmo poder de compra.</p>
+         <p>📈 A inflação acumulada no período foi de <strong>${inflacaoAcumulada.toFixed(2).replace('.', ',')}%</strong>.</p>`;
+      document.getElementById('resultado').style.display = 'block';
+    }
+
+    function novaSimulacao() {
+      document.getElementById('valor').value = '';
+      document.getElementById('anoInicial').value = '';
+      document.getElementById('anoFinal').value = '';
+      document.getElementById('resultado').style.display = 'none';
+      document.getElementById('resultado').innerHTML = '';
+    }
+  
+    document.getElementById('valor').addEventListener('input', function(e) {
+      let valor = e.target.value.replace(/\D/g, '');
+      if (valor.length < 3) valor = valor.padStart(3, '0');
+      const inteiro = valor.slice(0, -2);
+      const decimal = valor.slice(-2);
+      e.target.value = (parseFloat(inteiro + '.' + decimal)).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+    });
+
+</script>
+</body>
+</html>

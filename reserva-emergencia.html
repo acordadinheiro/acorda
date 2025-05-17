@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulador de Reserva de Emergência - Acorda Dinheiro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    main {
+      max-width: 700px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #003366;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .resultado {
+      margin-top: 20px;
+      background: #eaf1f8;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .explicacao {
+      margin-top: 30px;
+      background: #f0f4f9;
+      padding: 20px;
+      border-left: 6px solid #003366;
+      border-radius: 8px;
+    }
+    .explicacao h3 {
+      margin-top: 0;
+      color: #003366;
+    }
+    .explicacao ul {
+      padding-left: 20px;
+    }
+    .explicacao li {
+      margin-bottom: 10px;
+    }
+    .explicacao p {
+      font-size: 14px;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef6f9;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #005bc5;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+    }
+    input {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #005bc5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    a.voltar {
+      display: inline-block;
+      margin-top: 10px;
+      text-decoration: none;
+      color: #005bc5;
+      font-weight: bold;
+    }
+    #resultado {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #005bc5;
+    }
+    section {
+      margin-top: 40px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    section h2 {
+      color: #005bc5;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Simulador de Reserva de Emergência</h1>
+    <p>Uma ferramenta gratuita do canal Acorda, Dinheiro</p>
+  </header>
+  <main>
+    <div class="container">
+      <h2>Calcule sua Reserva</h2>
+      <input type="text" id="gastos" placeholder="Gastos mensais (R$)" />
+      <input type="number" id="meses" placeholder="Meses de reserva" />
+      <input type="text" id="jaTem" placeholder="Quanto você já tem poupado? (R$)" />
+      
+      
+      <div id="resultado"></div>
+    </div>
+
+    
+    <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 30px;">
+      <button onclick="calcularReserva()" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #005bc5; color: white; border: none; border-radius: 6px; cursor: pointer;">Calcular</button>
+      <button onclick="novaSimulacao()" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #005bc5; color: white; border: none; border-radius: 6px; cursor: pointer;">Nova Simulação</button>
+      <button onclick="window.location.href='index.html'" style="flex: 1; padding: 10px 15px; font-weight: bold; background-color: #005bc5; color: white; border: none; border-radius: 6px; cursor: pointer;">Voltar aos Simuladores</button>
+    </div>
+
+    <section>
+      <h2>O que é reserva de emergência</h2>
+      <p>A reserva de emergência é uma quantia de dinheiro reservada para imprevistos. Ter essa reserva é essencial pois imprevistos sempre acontecem. Assim, você estará preparado financeiramente, sem desespero.</p>
+      <p>Por exemplo, se você perder o emprego, terá suporte financeiro até conseguir outro. A grande vantagem é a tranquilidade de saber que você pode lidar com imprevistos sem entrar em dívidas.</p>
+      <h2>Quando usar</h2>
+      <p>Use apenas em emergências reais, como:</p>
+      <ul>
+        <li>Perda de emprego</li>
+        <li>Doenças graves</li>
+        <li>Acidentes de carro</li>
+        <li>Reparos urgentes</li>
+        <li>Falecimentos</li>
+      </ul>
+      <h2>Quanto guardar</h2>
+      <p>Calcule com base nos seus gastos mensais. Especialistas recomendam de 6 a 12 meses, dependendo da estabilidade da sua renda.</p>
+      <h2>Como calcular</h2>
+      <p>Multiplique seus gastos mensais pela quantidade de meses que deseja cobrir. Ex: R$ 3.000 × 6 meses = R$ 18.000</p>
+      <h2>Onde deixar a reserva</h2>
+      <ul>
+        <li><strong>Poupança:</strong> acesso rápido, mas baixa rentabilidade</li>
+        <li><strong>Conta digital com 100% do CDI</strong></li>
+        <li><strong>Tesouro Selic:</strong> alta liquidez e segurança</li>
+        <li><strong>CDB com liquidez diária:</strong> rentável e acessível</li>
+      </ul>
+      <p>Sempre prefira investimentos com <strong>baixo risco</strong>, <strong>alta liquidez</strong> e entenda que a <strong>rentabilidade</strong> não é o foco.</p>
+    </section>
+  </main>
+  <footer>
+    © 2025 - Acorda, Dinheiro | Siga a gente no Instagram @acordadinheiro
+  </footer>
+
+  <script>
+    const formatarParaBR = (valor) => {
+      const numero = valor.replace(/\D/g, '');
+      return (parseFloat(numero) / 100).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+    };
+
+    document.getElementById('gastos').addEventListener('input', function(e) {
+      e.target.value = formatarParaBR(e.target.value);
+    });
+
+    document.getElementById('jaTem').addEventListener('input', function(e) {
+      e.target.value = formatarParaBR(e.target.value);
+    });
+
+    function parseValorFormatado(valor) {
+      return parseFloat(valor.replace("R$", "").replace(/\./g, "").replace(",", ".").trim());
+    }
+
+    function calcularReserva() {
+      const gastos = parseValorFormatado(document.getElementById('gastos').value);
+      const meses = parseFloat(document.getElementById('meses').value);
+      const jaTem = parseValorFormatado(document.getElementById('jaTem').value) || 0;
+
+      if (isNaN(gastos) || isNaN(meses)) {
+        document.getElementById('resultado').innerText = "Preencha os campos corretamente.";
+        return;
+      }
+
+      const total = gastos * meses;
+      const falta = total - jaTem;
+      const percentual = jaTem > 0 ? Math.min((jaTem / total) * 100, 100).toFixed(2) : 0;
+
+      document.getElementById('resultado').innerHTML = `
+        <p>💰 Valor ideal da reserva: <strong>R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></p>
+        <p>📊 Você já tem: <strong>R$ ${jaTem.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong> (${percentual}%)</p>
+        <p>📌 Falta juntar: <strong>R$ ${Math.max(falta, 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></p>
+      `;
+    }
+  
+    function formatarReaisInput(elemento) {
+      let valor = elemento.value.replace(/\D/g, '');
+      if (valor.length < 3) valor = valor.padStart(3, '0');
+      const inteiro = valor.slice(0, valor.length - 2);
+      const decimal = valor.slice(-2);
+      const valorFormatado = parseFloat(inteiro + '.' + decimal).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+      elemento.value = valorFormatado;
+    }
+
+    document.getElementById('gastos').addEventListener('input', function(e) {
+      formatarReaisInput(e.target);
+    });
+    document.getElementById('jaTem').addEventListener('input', function(e) {
+      formatarReaisInput(e.target);
+    });
+
+    function novaSimulacao() {
+      document.getElementById('gastos').value = '';
+      document.getElementById('meses').value = '';
+      document.getElementById('jaTem').value = '';
+      document.getElementById('resultado').innerHTML = '';
+    }
+
+    function parseValorFormatado(valor) {
+      return parseFloat(valor.replace("R$", "").replace(/\./g, "").replace(",", ".").trim());
+    }
+
+  </script>
+</body>
+</html>
